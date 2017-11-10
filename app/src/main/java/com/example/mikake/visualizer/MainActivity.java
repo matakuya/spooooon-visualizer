@@ -1,5 +1,6 @@
 package com.example.mikake.visualizer;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -8,45 +9,64 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.SeekBar;
+import android.widget.TextView;
+
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.components.YAxis.AxisDependency;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.utils.ColorTemplate;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.ArrayList;
+
+// Http
+import com.example.mikake.visualizer.HttpResponseAsync;
 
 public class MainActivity extends AppCompatActivity {
+    private LineChart lineChart;
+    private SeekBar mSeekBarX;
+    private TextView tvX;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-    }
+        // Init LineChart
+        lineChart = (LineChart)findViewById(R.id.chart);
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
+        // Init LineDataSet
+        ArrayList<Entry> entries = new ArrayList<Entry>();
+        entries.add(new Entry(60f,0));
+        entries.add(new Entry(50f,1));
+        entries.add(new Entry(58f,2));
+        entries.add(new Entry(60f,3));
+        entries.add(new Entry(65f,4));
+        entries.add(new Entry(80f,5));
+        entries.add(new Entry(78f,6));
+        LineDataSet lineDataSet = new LineDataSet(entries, "weight");
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        // Init LineData
+        String[] labels = {"2015","2016","2017","2018","2019","2020","2021"};
+        LineData lineData = new LineData(labels, lineDataSet);
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+        // Set LineData to LineChart
+        lineChart.setData(lineData);
 
-        return super.onOptionsItemSelected(item);
+        lineChart.setDescription("体重の遷移");
+        lineChart.setBackgroundColor(Color.WHITE);
+        lineChart.animateX(1200);
+
+        // For API
+//        HttpResponseAsync responseAsync = new HttpResponseAsync();
+//        responseAsync.execute();
     }
 }
