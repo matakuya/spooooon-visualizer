@@ -1,8 +1,15 @@
 package com.example.mikake.visualizer;
 
+import android.app.Activity;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.TextView;
+
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,21 +23,38 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+
+
+
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.components.YAxis.AxisDependency;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.utils.ColorTemplate;
 
 /**
  * Created by mikake on 17/11/10.
  */
 
-public class HttpResponseAsync extends AsyncTask<Void, Void, String> {
+public class HttpResponseAsync extends AsyncTask<Void, Void, JSONArray> {
 
-    private TextView textView;
+    /**
+     * 呼び出し元のActivity
+     */
+    private Activity activity;
 
     /**
      * Constructor
      */
-    public HttpResponseAsync() {
+    public HttpResponseAsync(Activity activity) {
         super();
-        this.textView = textView;
+        this.activity = activity;
     }
 
     @Override
@@ -39,10 +63,10 @@ public class HttpResponseAsync extends AsyncTask<Void, Void, String> {
     }
 
     @Override
-    protected String doInBackground(Void... params) {
+    protected JSONArray doInBackground(Void... params) {
         HttpURLConnection con = null;
         URL url = null;
-        JSONObject jsonObject = null;
+        JSONArray jsonArray = null;
         String urlSt = "http://222.158.198.94:5000/log/1";
 
         try {
@@ -72,9 +96,9 @@ public class HttpResponseAsync extends AsyncTask<Void, Void, String> {
             // JSONを用いる場合
             InputStream in = con.getInputStream();
             String readst = readInputStream(in);
-            jsonObject = new JSONObject(readst).getJSONObject("log");
-            Log.d("JSON", jsonObject.toString());
-            return jsonObject.toString();
+            jsonArray = new JSONObject(readst).getJSONArray("logs");
+            Log.d("JSON", jsonArray.toString());
+            return jsonArray;
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -87,9 +111,45 @@ public class HttpResponseAsync extends AsyncTask<Void, Void, String> {
     }
 
     @Override
-    protected void onPostExecute(String result) {
+    protected void onPostExecute(JSONArray result) {
         // ここに非同期処理を行って取得したデータを処理する
-        textView.setText(String.valueOf(result));
+
+        for (int i = 0; i < result.length(); i++) {
+            try {
+                JSONObject jsonObject = result.getJSONObject(i);
+                String value = jsonObject.getString("value");
+                String timestamp = jsonObject.getString("timestamp");
+                Log.d("value", value);
+                Log.d("timestamp", timestamp);
+            } catch (JSONException e){
+                e.printStackTrace();
+            }
+
+        }
+        // Init LineChart
+        LineChart lineChart = (LineChart)activity.findViewById(R.id.chart);
+
+        // Init LineDataSet
+        ArrayList<Entry> entries = new ArrayList<Entry>();
+        entries.add(new Entry(60f,0));
+        entries.add(new Entry(50f,1));
+        entries.add(new Entry(58f,2));
+        entries.add(new Entry(60f,3));
+        entries.add(new Entry(65f,4));
+        entries.add(new Entry(80f,5));
+        entries.add(new Entry(78f,6));
+        LineDataSet lineDataSet = new LineDataSet(entries, "weight");
+
+        // Init LineData
+        String[] labels = {"2015","2016","2017","2018","2019","2020","2021"};
+        LineData lineData = new LineData(labels, lineDataSet);
+
+        // Set LineData to LineChart
+        lineChart.setData(lineData);
+
+        lineChart.setDescription("体重の遷移");
+        lineChart.setBackgroundColor(Color.WHITE);
+        lineChart.animateX(1200);
     }
 
     public String readInputStream(InputStream in) throws IOException, UnsupportedEncodingException {
