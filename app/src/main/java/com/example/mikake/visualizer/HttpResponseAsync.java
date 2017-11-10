@@ -24,8 +24,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-
-
+import java.util.List;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -113,43 +112,49 @@ public class HttpResponseAsync extends AsyncTask<Void, Void, JSONArray> {
     @Override
     protected void onPostExecute(JSONArray result) {
         // ここに非同期処理を行って取得したデータを処理する
+        if (result != null) {
+            // Init LineChart
+            LineChart lineChart = (LineChart) activity.findViewById(R.id.chart);
 
-        for (int i = 0; i < result.length(); i++) {
-            try {
-                JSONObject jsonObject = result.getJSONObject(i);
-                String value = jsonObject.getString("value");
-                String timestamp = jsonObject.getString("timestamp");
-                Log.d("value", value);
-                Log.d("timestamp", timestamp);
-            } catch (JSONException e){
-                e.printStackTrace();
+            // Init LineDataSet
+            ArrayList<Entry> entries = new ArrayList<Entry>();
+
+            // labels
+            List<String> labels = new ArrayList<String>();
+
+            for (int i = 0; i < result.length(); i++) {
+                try {
+                    JSONObject jsonObject = result.getJSONObject(i);
+                    String value = jsonObject.getString("value");
+                    String timestamp = jsonObject.getString("timestamp");
+                    Log.d("value", value);
+                    Log.d("timestamp", timestamp);
+                    entries.add(new Entry(Float.parseFloat(value), i));
+                    labels.add(timestamp);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
 
+            //        entries.add(new Entry(50f,1));
+            //        entries.add(new Entry(58f,2));
+            //        entries.add(new Entry(60f,3));
+            //        entries.add(new Entry(65f,4));
+            //        entries.add(new Entry(80f,5));
+            //        entries.add(new Entry(78f,6));
+            LineDataSet lineDataSet = new LineDataSet(entries, "温度");
+
+            // Init LineData
+//            String[] labels = {"2015", "2016", "2017", "2018", "2019", "2020", "2021"};
+            LineData lineData = new LineData(labels, lineDataSet);
+
+            // Set LineData to LineChart
+            lineChart.setData(lineData);
+
+            lineChart.setDescription("温度の遷移");
+            lineChart.setBackgroundColor(Color.WHITE);
+            lineChart.animateX(1200);
         }
-        // Init LineChart
-        LineChart lineChart = (LineChart)activity.findViewById(R.id.chart);
-
-        // Init LineDataSet
-        ArrayList<Entry> entries = new ArrayList<Entry>();
-        entries.add(new Entry(60f,0));
-        entries.add(new Entry(50f,1));
-        entries.add(new Entry(58f,2));
-        entries.add(new Entry(60f,3));
-        entries.add(new Entry(65f,4));
-        entries.add(new Entry(80f,5));
-        entries.add(new Entry(78f,6));
-        LineDataSet lineDataSet = new LineDataSet(entries, "weight");
-
-        // Init LineData
-        String[] labels = {"2015","2016","2017","2018","2019","2020","2021"};
-        LineData lineData = new LineData(labels, lineDataSet);
-
-        // Set LineData to LineChart
-        lineChart.setData(lineData);
-
-        lineChart.setDescription("体重の遷移");
-        lineChart.setBackgroundColor(Color.WHITE);
-        lineChart.animateX(1200);
     }
 
     public String readInputStream(InputStream in) throws IOException, UnsupportedEncodingException {
