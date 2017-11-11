@@ -41,7 +41,23 @@ import com.github.mikephil.charting.utils.ColorTemplate;
  * Created by mikake on 17/11/10.
  */
 
-public class HttpResponseAsync extends AsyncTask<Void, Void, JSONArray> {
+/*
+ * AsyncTask<型1, 型2,型3>
+ *
+ *   型1 … Activityからスレッド処理へ渡したい変数の型
+ *          ※ Activityから呼び出すexecute()の引数の型
+ *          ※ doInBackground()の引数の型
+ *
+ *   型2 … 進捗度合を表示する時に利用したい型
+ *          ※ onProgressUpdate()の引数の型
+ *
+ *   型3 … バックグラウンド処理完了時に受け取る型
+ *          ※ doInBackground()の戻り値の型
+ *          ※ onPostExecute()の引数の型
+ *
+ *   ※ それぞれ不要な場合は、Voidを設定すれば良い
+ */
+public class HttpResponseAsync extends AsyncTask<String, Void, JSONArray> {
 
     /**
      * 呼び出し元のActivity
@@ -62,12 +78,16 @@ public class HttpResponseAsync extends AsyncTask<Void, Void, JSONArray> {
     }
 
     @Override
-    protected JSONArray doInBackground(Void... params) {
+    protected JSONArray doInBackground(String... params) {
         HttpURLConnection con = null;
         URL url = null;
         JSONArray jsonArray = null;
-        String urlSt = "http://222.158.198.94:5000/log/1";
-
+        String date_type = params[0];
+        String temp_type = params[1];
+        String id = params[2];
+        String urlSt = "http://222.158.198.94:5000/typed_log?date_type=" + date_type + "&temp_type=" + temp_type + "&id=" + id;
+//        String urlSt = "http://222.158.198.94:5000/typed_log?date_type=" + date_type + "&temp_type=" + temp_type + "&id=" + id;
+        Log.d("URL", urlSt);
         try {
             // URLの作成
             url = new URL(urlSt);
@@ -125,12 +145,12 @@ public class HttpResponseAsync extends AsyncTask<Void, Void, JSONArray> {
             for (int i = 0; i < result.length(); i++) {
                 try {
                     JSONObject jsonObject = result.getJSONObject(i);
-                    String value = jsonObject.getString("value");
-                    String timestamp = jsonObject.getString("timestamp");
-                    Log.d("value", value);
-                    Log.d("timestamp", timestamp);
-                    entries.add(new Entry(Float.parseFloat(value), i));
-                    labels.add(timestamp);
+                    String count = jsonObject.getString("count");
+                    String time = jsonObject.getString("time");
+                    Log.d("count", count);
+                    Log.d("time", time);
+                    entries.add(new Entry(Float.parseFloat(count), i));
+                    labels.add(time);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -142,7 +162,7 @@ public class HttpResponseAsync extends AsyncTask<Void, Void, JSONArray> {
             //        entries.add(new Entry(65f,4));
             //        entries.add(new Entry(80f,5));
             //        entries.add(new Entry(78f,6));
-            LineDataSet lineDataSet = new LineDataSet(entries, "温度");
+            LineDataSet lineDataSet = new LineDataSet(entries, "秒");
 
             // Init LineData
 //            String[] labels = {"2015", "2016", "2017", "2018", "2019", "2020", "2021"};
@@ -151,7 +171,7 @@ public class HttpResponseAsync extends AsyncTask<Void, Void, JSONArray> {
             // Set LineData to LineChart
             lineChart.setData(lineData);
 
-            lineChart.setDescription("温度の遷移");
+            lineChart.setDescription("触れた時間");
             lineChart.setBackgroundColor(Color.WHITE);
             lineChart.animateX(1200);
         }

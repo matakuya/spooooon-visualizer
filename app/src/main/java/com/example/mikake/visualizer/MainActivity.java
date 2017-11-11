@@ -30,7 +30,7 @@ import java.util.ArrayList;
 // Http
 import com.example.mikake.visualizer.HttpResponseAsync;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
     private SeekBar mSeekBarX;
     private TextView tvX;
 
@@ -41,6 +41,33 @@ public class MainActivity extends AppCompatActivity {
 
         // For API
         HttpResponseAsync responseAsync = new HttpResponseAsync(MainActivity.this);
-        responseAsync.execute();
+        responseAsync.execute("hour", "hot", "4");
+
+        findViewById(R.id.month).setOnClickListener(this);
+        findViewById(R.id.day).setOnClickListener(this);
+        findViewById(R.id.hour).setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (view != null) {
+            HttpResponseAsync responseAsync = new HttpResponseAsync(MainActivity.this);
+            switch (view.getId()) {
+                case R.id.month:
+                    // For API
+                    responseAsync.execute("month", "hot", "4");
+                    break;
+                case R.id.day:
+                    // For API
+                    responseAsync.execute("day", "hot", "4");
+                    break;
+                case R.id.hour:
+                    // For API
+                    responseAsync.execute("hour", "hot", "4");
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }
