@@ -6,11 +6,38 @@
     android:orientation="vertical"
     android:weightSum="3"
     tools:context=".MainActivity">
-    <ImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:background="#ff0000"
-        android:id="@+id/imageView2" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#5cb85c"
+            android:lineSpacingExtra="4sp"
+            android:padding="8dp"
+            android:text="あついものを食べ過ぎていませんか？"
+            android:textColor="@android:color/black"
+            android:textSize="14sp" />
+
+        <!-- marginLeft="-6dp"することで角丸のTextViewに`◆`を重ねている。 -->
+        <View
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_marginLeft="-6dp"
+            android:background="#5cb85c"
+            android:rotation="45" />
+
+        <ImageView
+            android:layout_width="128dp"
+            android:layout_height="128dp"
+            android:layout_marginLeft="8dp"
+            android:src="@drawable/hot" />
+    </LinearLayout>
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/chart"
