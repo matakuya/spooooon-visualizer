@@ -1,7 +1,10 @@
 package com.example.mikake.visualizer;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -130,27 +133,37 @@ public class EvaluateResponseAsync extends AsyncTask<String, Void, JSONObject> {
                 e.printStackTrace();
             }
             ImageView imageView = (ImageView)activity.findViewById(R.id.icon);
+            //Do some stuff with it, then when memory gets low:
+//            ((BitmapDrawable)imageView.getDrawable()).getBitmap().recycle();
             TextView textView = (TextView) activity.findViewById(R.id.line);
-            Drawable drawable = null;
+//            Drawable drawable = null;
+            Bitmap bitmap = null;
             Log.d("DEBUG", evaluation);
             switch (evaluation) {
                 case "hot":
                     Log.d("EVALUATE", evaluation);
-                    drawable = activity.getResources().getDrawable(R.drawable.hot);
+                    bitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.hot);
                     textView.setText("熱すぎるものを食べていませんか");
                     break;
                 case "nomal":
                     Log.d("EVALUATE", evaluation);
-                    drawable = activity.getResources().getDrawable(R.drawable.normal);
+                    bitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.hot);
+//                    drawable = activity.getResources().getDrawable(R.drawable.normal);
                     textView.setText("丁度いいですね");
                     break;
                 case "cold":
                     Log.d("EVALUATE", evaluation);
-                    drawable = activity.getResources().getDrawable(R.drawable.cold);
+                    bitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.hot);
+//                    drawable = activity.getResources().getDrawable(R.drawable.cold);
                     textView.setText("冷たすぎるものを食べていませんか");
                     break;
             }
-            imageView.setImageDrawable(drawable);
+            int height = (bitmap.getHeight() * 256 / bitmap.getWidth());
+            Bitmap scale = Bitmap.createScaledBitmap(bitmap, 256, height, true);
+            imageView.setImageBitmap(scale);
+            //Do some stuff with it, then when memory gets low:
+//            ((BitmapDrawable)imageView.getDrawable()).getBitmap().recycle();
+//              imageView.setImageDrawable(drawable);
         }
     }
 
