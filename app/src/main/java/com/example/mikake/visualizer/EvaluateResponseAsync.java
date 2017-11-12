@@ -2,8 +2,10 @@ package com.example.mikake.visualizer;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
@@ -26,17 +28,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.AxisBase;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.components.YAxis.AxisDependency;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.utils.ColorTemplate;
-
 /**
  * Created by mikake on 17/11/10.
  */
@@ -57,7 +48,7 @@ import com.github.mikephil.charting.utils.ColorTemplate;
  *
  *   ※ それぞれ不要な場合は、Voidを設定すれば良い
  */
-public class HttpResponseAsync extends AsyncTask<String, Void, JSONArray> {
+public class EvaluateResponseAsync extends AsyncTask<String, Void, JSONObject> {
 
     /**
      * 呼び出し元のActivity
@@ -67,7 +58,7 @@ public class HttpResponseAsync extends AsyncTask<String, Void, JSONArray> {
     /**
      * Constructor
      */
-    public HttpResponseAsync(Activity activity) {
+    public EvaluateResponseAsync(Activity activity) {
         super();
         this.activity = activity;
     }
@@ -78,15 +69,12 @@ public class HttpResponseAsync extends AsyncTask<String, Void, JSONArray> {
     }
 
     @Override
-    protected JSONArray doInBackground(String... params) {
+    protected JSONObject doInBackground(String... params) {
         HttpURLConnection con = null;
         URL url = null;
-        JSONArray jsonArray = null;
-        String date_type = params[0];
-        String temp_type = params[1];
-        String id = params[2];
-        String urlSt = "http://222.158.198.94:5000/typed_log?date_type=" + date_type + "&temp_type=" + temp_type + "&id=" + id;
-//        String urlSt = "http://222.158.198.94:5000/typed_log?date_type=" + date_type + "&temp_type=" + temp_type + "&id=" + id;
+        JSONObject jsonObject = null;
+        String id = params[0];
+        String urlSt = "http://222.158.198.94:5000/evaluate/" + id;
         Log.d("URL", urlSt);
         try {
             // URLの作成
@@ -115,9 +103,9 @@ public class HttpResponseAsync extends AsyncTask<String, Void, JSONArray> {
             // JSONを用いる場合
             InputStream in = con.getInputStream();
             String readst = readInputStream(in);
-            jsonArray = new JSONObject(readst).getJSONArray("logs");
-            Log.d("JSON", jsonArray.toString());
-            return jsonArray;
+            jsonObject = new JSONObject(readst).getJSONObject("evaluation");
+            Log.d("JSON", jsonObject.toString());
+            return jsonObject;
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -130,50 +118,39 @@ public class HttpResponseAsync extends AsyncTask<String, Void, JSONArray> {
     }
 
     @Override
-    protected void onPostExecute(JSONArray result) {
+    protected void onPostExecute(JSONObject result) {
         // ここに非同期処理を行って取得したデータを処理する
         if (result != null) {
-            // Init LineChart
-            LineChart lineChart = (LineChart) activity.findViewById(R.id.chart);
-
-            // Init LineDataSet
-            ArrayList<Entry> entries = new ArrayList<Entry>();
-
-            // labels
-            List<String> labels = new ArrayList<String>();
-
-            for (int i = 0; i < result.length(); i++) {
-                try {
-                    JSONObject jsonObject = result.getJSONObject(i);
-                    String count = jsonObject.getString("count");
-                    String time = jsonObject.getString("time");
-                    Log.d("count", count);
-                    Log.d("time", time);
-                    entries.add(new Entry(Float.parseFloat(count), i));
-                    labels.add(time);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+            String evaluation = "";
+            Log.d("DEBUG", "evaluate start");
+            try {
+                evaluation = result.getString("evaluation");
+                Log.d("DEBUG", evaluation);
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-
-            //        entries.add(new Entry(50f,1));
-            //        entries.add(new Entry(58f,2));
-            //        entries.add(new Entry(60f,3));
-            //        entries.add(new Entry(65f,4));
-            //        entries.add(new Entry(80f,5));
-            //        entries.add(new Entry(78f,6));
-            LineDataSet lineDataSet = new LineDataSet(entries, "秒");
-
-            // Init LineData
-//            String[] labels = {"2015", "2016", "2017", "2018", "2019", "2020", "2021"};
-            LineData lineData = new LineData(labels, lineDataSet);
-
-            // Set LineData to LineChart
-            lineChart.setData(lineData);
-
-            lineChart.setDescription("触れた時間");
-            lineChart.setBackgroundColor(Color.WHITE);
-            lineChart.animateX(1200);
+            ImageView imageView = (ImageView)activity.findViewById(R.id.icon);
+            TextView textView = (TextView) activity.findViewById(R.id.line);
+            Drawable drawable = null;
+            Log.d("DEBUG", evaluation);
+            switch (evaluation) {
+                case "hot":
+                    Log.d("EVALUATE", evaluation);
+                    drawable = activity.getResources().getDrawable(R.drawable.hot);
+                    textView.setText("熱すぎるものを食べていませんか");
+                    break;
+                case "nomal":
+                    Log.d("EVALUATE", evaluation);
+                    drawable = activity.getResources().getDrawable(R.drawable.normal);
+                    textView.setText("丁度いいですね");
+                    break;
+                case "cold":
+                    Log.d("EVALUATE", evaluation);
+                    drawable = activity.getResources().getDrawable(R.drawable.cold);
+                    textView.setText("冷たすぎるものを食べていませんか");
+                    break;
+            }
+            imageView.setImageDrawable(drawable);
         }
     }
 
