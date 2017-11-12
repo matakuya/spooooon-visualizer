@@ -14,13 +14,15 @@
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/line"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="#5cb85c"
             android:lineSpacingExtra="4sp"
             android:padding="8dp"
-            android:text="あついものを食べ過ぎていませんか？"
+            android:layout_marginLeft="8dp"
+            android:text="同期中です"
             android:textColor="@android:color/black"
             android:textSize="14sp" />
 
@@ -33,10 +35,11 @@
             android:rotation="45" />
 
         <ImageView
+            android:id="@+id/icon"
             android:layout_width="128dp"
             android:layout_height="128dp"
             android:layout_marginLeft="8dp"
-            android:src="@drawable/hot" />
+            android:src="@drawable/normal" />
     </LinearLayout>
 
     <com.github.mikephil.charting.charts.LineChart

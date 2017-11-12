@@ -2,6 +2,7 @@ package com.example.mikake.visualizer;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +27,8 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 // Http
 import com.example.mikake.visualizer.HttpResponseAsync;
@@ -33,7 +36,10 @@ import com.example.mikake.visualizer.HttpResponseAsync;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
     private SeekBar mSeekBarX;
     private TextView tvX;
+    private String id = "4";
 
+    private Timer timer = null;
+    Handler handler = new Handler();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,7 +47,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // For API
         HttpResponseAsync responseAsync = new HttpResponseAsync(MainActivity.this);
-        responseAsync.execute("hour", "hot", "4");
+        responseAsync.execute("hour", "hot", this.id);
+
+        timer = new Timer(true);
+        timer.schedule(new TimerTask(){
+            @Override
+            public void run() {
+                handler.post( new Runnable() {
+                    public void run() {
+                        //ここに処理を書く
+                        // For Evaluate
+                        EvaluateResponseAsync evaluateResponseAsync = new EvaluateResponseAsync(MainActivity.this);
+                        evaluateResponseAsync.execute("4");
+                    }
+                });
+            }
+        },1000,3000); //1秒後から5秒間隔で実行
 
         findViewById(R.id.month).setOnClickListener(this);
         findViewById(R.id.day).setOnClickListener(this);
@@ -55,15 +76,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             switch (view.getId()) {
                 case R.id.month:
                     // For API
-                    responseAsync.execute("month", "hot", "4");
+                    responseAsync.execute("month", "hot", this.id);
                     break;
                 case R.id.day:
                     // For API
-                    responseAsync.execute("day", "hot", "4");
+                    responseAsync.execute("day", "hot", this.id);
                     break;
                 case R.id.hour:
                     // For API
-                    responseAsync.execute("hour", "hot", "4");
+                    responseAsync.execute("hour", "hot", this.id);
                     break;
                 default:
                     break;
