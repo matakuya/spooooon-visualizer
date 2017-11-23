@@ -12,6 +12,8 @@ import com.tinkermode.MODEApp;
 import com.tinkermode.MODEData;
 import com.tinkermode.MODEEventListener;
 
+import java.util.List;
+
 public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,17 +56,14 @@ public class LoginActivity extends AppCompatActivity {
                             Log.d("Login", "Success");
                             Log.d("Login", ret.toString());
 
-
-
-                            // Return MainActivity
-                            finish();
-
-
 //                            logger.d("Succeeded authentication: " + ret.toString());
-//                            DataHolder.setClientAuthentication(ret);
+                            DataHolder.setClientAuthentication(ret);
 //                            DeviceManager.getInstance().startListenToEvents(ret);
-//                            DataHolder.saveData(getApplicationContext());
+                            DataHolder.saveData(getApplicationContext());
 //
+
+                            fetchHomes();
+                            fetchDevices();
 //                            LoginActivity loginActivity = weakReference.get();
 //                            if (loginActivity != null) {
 //                                final Intent intent = new Intent(loginActivity, MainActivity.class);
@@ -74,18 +73,55 @@ public class LoginActivity extends AppCompatActivity {
 //                            progressDialog.hide();
 //
 //                            logger.d("Succeeded to initiate auth: " + ret.toString());
+
+                            // Return to MainActivity
+                            finish();
                         }
                     }
                 });
     }
 
-//    private void fetchDevices() {
-//        MODEApp.getDevices(
-//
-//        )
-//    }
-//
-//    private void fetchHomes() {
-//        MODEApp.getHomes()
-//    }
+    private void fetchDevices() {
+        MODEApp.getDevices(
+                getApplicationContext(),
+                DataHolder.getClientAuthentication(),
+                DataHolder.getHomeId(),
+                new MODEApp.Completion<List<MODEData.Device>>() {
+                    @Override
+                    public void done(List<MODEData.Device> ret, Throwable e) {
+                        if (e != null) {
+                            Log.d("Fetch Devices", "Error");
+                        } else {
+                            Log.d("Fetch devices", "Success");
+                            for (MODEData.Device device : ret) {
+                                Log.d("Device", device.toString());
+                            }
+//                            DeviceManager.getInstance().queryDeviceStatus(getActivity(), ret);
+//                            postUpdate((List<MODEData.MODEObject>)(List<?>)ret);
+                        }
+                    }
+                });
+    }
+
+    private void fetchHomes() {
+        MODEApp.getHomes(
+                getApplicationContext(),
+                DataHolder.getClientAuthentication(),
+                DataHolder.getClientAuthentication().userId,
+                new MODEApp.Completion<List<MODEData.Home>>() {
+                    @Override
+                    public void done(List<MODEData.Home> ret, Throwable e) {
+                        if (e != null) {
+                            Log.d("fetch Homes","Error");
+                        } else {
+                            Log.d("Fetch Homes", "Success");
+                            for (MODEData.Home home : ret) {
+                                Log.d("Home", home.toString());
+                                DataHolder.setHomeId(home.homeId);
+                            }
+                            Log.d("Home Id", Integer.toString(DataHolder.getHomeId()));
+                        }
+                    }
+                });
+    }
 }

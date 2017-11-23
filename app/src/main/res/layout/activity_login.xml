@@ -25,6 +25,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textEmailAddress"
+                    android:hint="@string/prompt_email"
                     android:maxLines="1"
                     android:singleLine="true" />
 
@@ -41,6 +42,7 @@
                     android:imeActionId="6"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textPassword"
+                    android:hint="@string/prompt_password"
                     android:maxLines="1"
                     android:singleLine="true" />
 
@@ -49,6 +51,7 @@
             <Button
                 android:id="@+id/email_sign_in_button"
                 style="?android:textAppearanceSmall"
+                android:hint="@string/action_sign_in"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
