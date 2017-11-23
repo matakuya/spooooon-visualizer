@@ -34,6 +34,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Login
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(intent);
+
         setContentView(R.layout.activity_main);
 
         // For API
@@ -60,8 +65,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.hour).setOnClickListener(this);
 
         // 画面遷移
-        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-        startActivity(intent);
+//        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+//        startActivity(intent);
     }
 
     @Override

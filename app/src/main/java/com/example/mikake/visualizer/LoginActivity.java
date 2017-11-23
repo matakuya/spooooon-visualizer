@@ -33,25 +33,25 @@ public class LoginActivity extends AppCompatActivity {
 
     private void login(View view) {
         //IoTデバイスハブのAPIエンドポイントを指定する
-        MODEApp.setAPIHost("iot-device.jp-east-1.api.cloud.nifty.com");
-
+        MODEApp.setAPIHost(DataHolder.getAPIHost());
         //WebSocket用のAPIエンドポイント指定
-        MODEEventListener.setWebsocketHost("iot-device.jp-east-1.api.cloud.nifty.com");
+        MODEEventListener.setWebsocketHost(DataHolder.getAPIHost());
 
-        TextView emailText = (TextView) findViewById(R.id.email);
-        TextView passwordText = (TextView) findViewById(R.id.password);
+        final TextView emailText = (TextView) findViewById(R.id.email);
+        final TextView passwordText = (TextView) findViewById(R.id.password);
         MODEApp.authenticateWithEmail(
                 getApplicationContext(),
-                189,
+                DataHolder.getProjectId(),
                 emailText.getText().toString(),
                 passwordText.getText().toString(),
-                "espwroom32apuri",
+                DataHolder.appId,
                 new MODEApp.Completion<MODEData.ClientAuthentication>() {
                     @Override
                     public void done(MODEData.ClientAuthentication ret, Throwable e) {
                         if (e != null) {
                             Log.d("Login", "Error");
 //                            MiscUtils.showAlert(getApplicationContext(), getClass(), e);
+                            passwordText.setError(getResources().getString(R.string.error_incorrect_password));
                         } else {
                             Log.d("Login", "Success");
                             Log.d("Login", ret.toString());

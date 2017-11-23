@@ -15,19 +15,19 @@ import java.io.IOException;
 /**
  * ログイン情報を管理する必要があったのでSingletonクラスを用意する必要があった．
  *
- * ここを参考（てかコピペ）
+ * ここを参考
  * https://github.com/moderepo/Android-SDK/blob/98c169b394533c705dfd96dbba02e6e759ea1b20/lumos/src/main/java/com/tinkermode/lumos/managers/DataHolder.java
  */
 
 public class DataHolder {
-    private static int projectId;
+    private static int projectId = 189;
     private static boolean emailLogin;
 
     // You would need to setup appId according to your App settings.
     // The sample project pregenerates "controller_app" App. So you don't have to change the project
     // if you use it as it is.
     // Please see more detail (http://dev.tinkermode.com/tutorials/getting_started.html) to get them.
-    public static final String appId = "controller_app";
+    public static final String appId = "espwroom32apuri";
 
     public static int getProjectId() {
         return projectId;
@@ -61,7 +61,7 @@ public class DataHolder {
     static private String email;
     static private String password;
 
-    static private String APIHost = "api.tinkermode.com";
+    static private String APIHost = "iot-device.jp-east-1.api.cloud.nifty.com";
 
     static public void setAPIHost(String host) {
         APIHost = host;
