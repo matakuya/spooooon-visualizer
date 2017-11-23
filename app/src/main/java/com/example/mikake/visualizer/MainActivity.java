@@ -1,5 +1,6 @@
 package com.example.mikake.visualizer;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -57,8 +58,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     public void run() {
                         //ここに処理を書く
                         // For Evaluate
-                        EvaluateResponseAsync evaluateResponseAsync = new EvaluateResponseAsync(MainActivity.this);
-                        evaluateResponseAsync.execute("4");
+//                        EvaluateResponseAsync evaluateResponseAsync = new EvaluateResponseAsync(MainActivity.this);
+//                        evaluateResponseAsync.execute("4");
                     }
                 });
             }
@@ -67,6 +68,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.month).setOnClickListener(this);
         findViewById(R.id.day).setOnClickListener(this);
         findViewById(R.id.hour).setOnClickListener(this);
+
+        // 画面遷移
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(intent);
     }
 
     @Override
