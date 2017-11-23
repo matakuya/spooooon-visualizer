@@ -147,13 +147,13 @@ public class EvaluateResponseAsync extends AsyncTask<String, Void, JSONObject> {
                     break;
                 case "nomal":
                     Log.d("EVALUATE", evaluation);
-                    bitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.hot);
+                    bitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.normal);
 //                    drawable = activity.getResources().getDrawable(R.drawable.normal);
                     textView.setText("丁度いいですね");
                     break;
                 case "cold":
                     Log.d("EVALUATE", evaluation);
-                    bitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.hot);
+                    bitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.cold);
 //                    drawable = activity.getResources().getDrawable(R.drawable.cold);
                     textView.setText("冷たすぎるものを食べていませんか");
                     break;
